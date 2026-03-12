@@ -6,7 +6,11 @@ A professional industrial automation project developed using **Beckhoff TwinCAT 
 [Click here to watch the operation video](https://youtu.be/J6CA5q3nxms)
 
 ---
-https://github.com/user-attachments/assets/a9459346-ef92-409f-98cb-9ce65f870b9c
+
+
+https://github.com/user-attachments/assets/2a1c6a20-d754-4be7-b594-4c21fe66e749
+
+
 ---
 
 ##  System Architecture & Features
