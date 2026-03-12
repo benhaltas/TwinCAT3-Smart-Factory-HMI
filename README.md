@@ -2,12 +2,14 @@
 
 A professional industrial automation project developed using **Beckhoff TwinCAT 3**. This project simulates a continuous production line for a smart factory, integrating PLC logic, HMI visualization, and IIoT connectivity.
 
-## 📺 Project Demo
+##  Project Demo
 [Click here to watch the operation video](https://youtu.be/J6CA5q3nxms)
 
 ---
+https://github.com/user-attachments/assets/a9459346-ef92-409f-98cb-9ce65f870b9c
+---
 
-## 🏗️ System Architecture & Features
+##  System Architecture & Features
 
 This project is built on a robust **State Machine** architecture and utilizes industrial best practices for structured programming (IEC 61131-3).
 
@@ -39,7 +41,7 @@ To demonstrate Industry 4.0 integration, I developed a high-level monitoring scr
 
 ---
 
-## 🛠️ Technical Stack
+##  Technical Stack
 * **Logic:** Structured Text (ST) - IEC 61131-3
 * **Platform:** Beckhoff TwinCAT 3 (XAE / XAR)
 * **Connectivity:** Python (pyads library)
@@ -49,10 +51,10 @@ To demonstrate Industry 4.0 integration, I developed a high-level monitoring scr
 
 ---
 
-## 🎓 About the Author
+##  About the Author
 **Ahmed Haltas**
 * **M.Eng. [cite_start]Industry 4.0 Student** @ Hochschule Albstadt-Sigmaringen [cite: 71, 72]
 * **B.Sc. [cite_start]Mechanical Engineering** [cite: 75]
 * **Specialization:** Integrating Mechanical Design (CAD/CAE) with Industrial Automation, System Integration, and IIoT[cite: 63, 103].
 
-📫 **Connect with me:** [LinkedIn](https://www.linkedin.com/in/ahmedhaltas/)
+ **Connect with me:** [LinkedIn](https://www.linkedin.com/in/ahmedhaltas/)
