@@ -1,15 +1,13 @@
 # Smart Factory Process Control Simulation (TwinCAT 3)
 
-A professional industrial automation project developed using **Beckhoff TwinCAT 3**. This project simulates a continuous production line for a smart factory, integrating PLC logic, HMI visualization, and Predictive Maintenance concepts.
+A professional industrial automation project developed using **Beckhoff TwinCAT 3**. This project simulates a continuous production line for a smart factory, integrating PLC logic, HMI visualization, and IIoT connectivity.
 
-## Project Demo
-To watch the full operation video: https://youtu.be/J6CA5q3nxms
-
-https://github.com/user-attachments/assets/a9459346-ef92-409f-98cb-9ce65f870b9c
+## 📺 Project Demo
+[Click here to watch the operation video](https://youtu.be/J6CA5q3nxms)
 
 ---
 
-## System Architecture & Features
+## 🏗️ System Architecture & Features
 
 This project is built on a robust **State Machine** architecture and utilizes industrial best practices for structured programming (IEC 61131-3).
 
@@ -26,34 +24,35 @@ Utilizes custom **Data Structures (DUTs)** to handle multi-product production.
 ### 3. Predictive Maintenance (Industry 4.0)
 Integrated a vibration and temperature monitoring simulation to prevent machine failure.
 * **Cycle Monitoring:** Tracks valve actuations and component stress.
-* **Intelligent Shutdown:** Automatically halts production and locks the system when a maintenance threshold is reached.
+* **Intelligent Shutdown:** Automatically halts production and locks the system when a maintenance threshold is reached (e.g., simulated heat or vibration anomaly).
 * **Maintenance Mode:** Requires a dedicated technician reset to re-calibrate and restart the process.
 
 ### 4. Machine Safety & HMI
 * **Emergency Stop:** A high-priority safety interrupt that instantly kills all actuators and locks the UI.
 * **Live SCADA Dashboard:** Real-time visualization of tank levels, temperatures, production counters (OEE), and system status strings.
 
+### 5. OT-IT Connectivity & Data Logging (IIoT Bridge)
+To demonstrate Industry 4.0 integration, I developed a high-level monitoring script using **Python** to act as a bridge between the PLC (OT) and Data Analytics (IT).
+* **Live Telemetry:** Using the **ADS (Automation Device Specification)** protocol, Python extracts real-time variables directly from the TwinCAT runtime.
+* **Historian / Data Archiving:** The system automatically logs production data (Timestamps, Status, Production Counts, and Temperature) into a `.csv` format, creating a historical record for OEE analysis.
+* **Scalability:** This setup serves as the foundation for further integrations like MQTT cloud publishing or predictive AI modeling.
+
 ---
 
-##  Technical Stack
+## 🛠️ Technical Stack
 * **Logic:** Structured Text (ST) - IEC 61131-3
 * **Platform:** Beckhoff TwinCAT 3 (XAE / XAR)
+* **Connectivity:** Python (pyads library)
 * **Visualization:** TwinCAT HMI (Integrated Visualization)
+* **Data Persistence:** CSV Data Logging (Historian)
 * **Design Patterns:** State Machine, Dynamic Recipe Handling, Rising Edge Triggers.
 
 ---
 
-## About the Author
+## 🎓 About the Author
 **Ahmed Haltas**
-* **M.Eng. Industry 4.0** Student @ Hochschule Albstadt-Sigmaringen
-* **B.Sc. Mechanical Engineering**
-* Specializing in the integration of Mechanical Design (CAD/CAE) with Industrial Automation.
+* **M.Eng. [cite_start]Industry 4.0 Student** @ Hochschule Albstadt-Sigmaringen [cite: 71, 72]
+* **B.Sc. [cite_start]Mechanical Engineering** [cite: 75]
+* **Specialization:** Integrating Mechanical Design (CAD/CAE) with Industrial Automation, System Integration, and IIoT[cite: 63, 103].
 
 📫 **Connect with me:** [LinkedIn](https://www.linkedin.com/in/ahmedhaltas/)
-
-
-
-
-
-
-
