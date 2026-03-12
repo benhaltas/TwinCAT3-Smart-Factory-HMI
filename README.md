@@ -57,8 +57,8 @@ To demonstrate Industry 4.0 integration, I developed a high-level monitoring scr
 
 ##  About the Author
 **Ahmed Haltas**
-* **M.Eng. [cite_start]Industry 4.0 Student** @ Hochschule Albstadt-Sigmaringen [cite: 71, 72]
-* **B.Sc. [cite_start]Mechanical Engineering** [cite: 75]
-* **Specialization:** Integrating Mechanical Design (CAD/CAE) with Industrial Automation, System Integration, and IIoT[cite: 63, 103].
+* **M.Eng. Industry 4.0 Student** @ Hochschule Albstadt-Sigmaringen
+* **B.Sc.Mechanical Engineering**
+* **Specialization:** Integrating Mechanical Design (CAD/CAE) with Industrial Automation, System Integration, and IIoT.
 
  **Connect with me:** [LinkedIn](https://www.linkedin.com/in/ahmedhaltas/)
