@@ -3,7 +3,9 @@
 A professional industrial automation project developed using **Beckhoff TwinCAT 3**. This project simulates a continuous production line for a smart factory, integrating PLC logic, HMI visualization, and Predictive Maintenance concepts.
 
 ## Project Demo
-[Click here to watch the operation video] https://youtube.com/shorts/gteO7tBlQWQ
+[Click here to watch the operation video] https://youtu.be/J6CA5q3nxms
+
+https://github.com/user-attachments/assets/2d0a98ab-dd7a-473b-bf3e-92f65dd33b9b
 
 ---
 
@@ -49,5 +51,9 @@ Integrated a vibration and temperature monitoring simulation to prevent machine 
 
 📫 **Connect with me:** [LinkedIn](https://www.linkedin.com/in/ahmedhaltas/)
 
-https://github.com/user-attachments/assets/0dfc0fa0-e0cb-4c81-bdae-6a5dc19f5a8b
+
+
+
+
+
 
