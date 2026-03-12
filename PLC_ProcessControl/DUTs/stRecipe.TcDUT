@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <DUT Name="stRecipe" Id="{19444496-3a43-43a9-acbf-04fef76c247a}">
+    <Declaration><![CDATA[TYPE stRecipe :
+STRUCT
+	sProductName : STRING(50);
+	fTargetFill_ml : REAL;
+	fTargetTemp_Celsius : REAL;
+	tMixingDuration : TIME;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

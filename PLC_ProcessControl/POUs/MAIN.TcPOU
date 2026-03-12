@@ -1,0 +1,195 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="MAIN" Id="{8d566321-c588-434c-ae7b-e93454d8f8fa}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+    // --- The Brain: State Machine ---
+    // YENİ EKLENDİ: STATE_MAINTENANCE
+    eState : (STATE_IDLE, STATE_INIT, STATE_FILLING, STATE_HEATING, STATE_MIXING, STATE_BOTTLING, STATE_COMPLETE, STATE_MAINTENANCE, STATE_ERROR) := STATE_IDLE;
+    
+    // --- Timers & Triggers ---
+    fbTimerMixing   : TON; 
+    rtInletValve    : R_TRIG;
+    
+    // --- Simulation Rates ---
+    fFillRate       : REAL := 2.5;  
+    fHeatRate       : REAL := 0.1;  
+    fEmptyRate      : REAL := 2.5;  
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// =========================================================
+// 0. HMI VISUAL FEEDBACK & STATUS MAP
+// =========================================================
+GVL_Process.bColaActive  := (GVL_Process.nSelectedRecipe = 1);
+GVL_Process.bJuiceActive := (GVL_Process.nSelectedRecipe = 2);
+
+
+// =========================================================
+// 0.5 PREDICTIVE MAINTENANCE 
+// =========================================================
+rtInletValve(CLK := GVL_Process.bInletValve);
+
+IF rtInletValve.Q THEN
+    GVL_Process.nValveCycleCount := GVL_Process.nValveCycleCount + 1;
+END_IF
+
+
+IF GVL_Process.nValveCycleCount >= GVL_Process.nRandomThreshold AND eState <> STATE_MAINTENANCE AND eState <> STATE_ERROR THEN
+    GVL_Process.bMaintenanceAlarm := TRUE;
+    eState := STATE_MAINTENANCE; 
+END_IF
+
+
+// =========================================================
+// 1. SAFETY FIRST: EMERGENCY STOP OVERRIDE
+// =========================================================
+IF GVL_Process.bEmergencyStop THEN
+    eState := STATE_ERROR;
+    GVL_Process.bStartProcess := FALSE; // Cancel continuous run on error
+END_IF
+
+// =========================================================
+// 2. MAIN PROCESS: STATE MACHINE
+// =========================================================
+CASE eState OF
+
+    STATE_IDLE: 
+        GVL_Process.sStatusMessage := 'SYSTEM READY - WAITING FOR START';
+        GVL_Process.sCurrentProduct := '-'; // Clear product screen
+        
+        // Loop starts here and keeps bStartProcess TRUE
+        IF GVL_Process.bStartProcess AND NOT GVL_Process.bEmergencyStop THEN
+            eState := STATE_INIT;
+        END_IF
+
+    STATE_INIT: 
+        GVL_Process.sStatusMessage := 'INITIALIZING RECIPE...';
+        
+        // --- DYNAMIC RECIPE SELECTION ---
+        IF GVL_Process.nSelectedRecipe = 1 THEN
+            GVL_Process.stCurrentRecipe.sProductName := 'Cola';
+            GVL_Process.stCurrentRecipe.fTargetFill_ml := 1000.0;
+            GVL_Process.stCurrentRecipe.fTargetTemp_Celsius := 85.0;
+            GVL_Process.stCurrentRecipe.tMixingDuration := T#5S;
+            GVL_Process.sCurrentProduct := 'COLA'; // HMI Update
+            
+        ELSIF GVL_Process.nSelectedRecipe = 2 THEN
+            GVL_Process.stCurrentRecipe.sProductName := 'Juice';
+            GVL_Process.stCurrentRecipe.fTargetFill_ml := 800.0;
+            GVL_Process.stCurrentRecipe.fTargetTemp_Celsius := 70.0;
+            GVL_Process.stCurrentRecipe.tMixingDuration := T#3S;
+            GVL_Process.sCurrentProduct := 'JUICE'; // HMI Update
+        END_IF
+        
+        // Reset outputs for the new bottle
+        GVL_Process.bInletValve  := FALSE;
+        GVL_Process.bHeater      := FALSE;
+        GVL_Process.bMixerMotor  := FALSE;
+        GVL_Process.bOutletValve := FALSE;
+        GVL_Process.fCurrentLevel := 0.0;
+        GVL_Process.fCurrentTemp  := 20.0; 
+        
+        eState := STATE_FILLING;
+
+    STATE_FILLING: 
+        GVL_Process.sStatusMessage := 'FILLING TANK...';
+        GVL_Process.bInletValve := TRUE;
+        
+        GVL_Process.fCurrentLevel := GVL_Process.fCurrentLevel + fFillRate;
+        
+        IF GVL_Process.fCurrentLevel >= GVL_Process.stCurrentRecipe.fTargetFill_ml THEN
+            GVL_Process.fCurrentLevel := GVL_Process.stCurrentRecipe.fTargetFill_ml; 
+            GVL_Process.bInletValve := FALSE; 
+            eState := STATE_HEATING;
+        END_IF
+
+    STATE_HEATING: 
+        GVL_Process.sStatusMessage := 'HEATING PRODUCT...';
+        GVL_Process.bHeater := TRUE;
+        
+        GVL_Process.fCurrentTemp := GVL_Process.fCurrentTemp + fHeatRate;
+        
+        IF GVL_Process.fCurrentTemp >= GVL_Process.stCurrentRecipe.fTargetTemp_Celsius THEN
+            GVL_Process.fCurrentTemp := GVL_Process.stCurrentRecipe.fTargetTemp_Celsius; 
+            GVL_Process.bHeater := FALSE; 
+            eState := STATE_MIXING;
+        END_IF
+
+    STATE_MIXING: 
+        GVL_Process.sStatusMessage := 'MIXING INGREDIENTS...';
+        GVL_Process.bMixerMotor := TRUE;
+        fbTimerMixing(IN := TRUE, PT := GVL_Process.stCurrentRecipe.tMixingDuration);
+        
+        IF fbTimerMixing.Q THEN 
+            GVL_Process.bMixerMotor := FALSE;
+            fbTimerMixing(IN := FALSE); 
+            eState := STATE_BOTTLING;
+        END_IF
+
+    STATE_BOTTLING: 
+        GVL_Process.sStatusMessage := 'BOTTLING PRODUCT...';
+        GVL_Process.bOutletValve := TRUE;
+        
+        GVL_Process.fCurrentLevel := GVL_Process.fCurrentLevel - fEmptyRate;
+        
+        IF GVL_Process.fCurrentLevel <= 0.0 THEN
+            GVL_Process.fCurrentLevel := 0.0; 
+            GVL_Process.bOutletValve := FALSE;
+            eState := STATE_COMPLETE;
+        END_IF
+
+    STATE_COMPLETE: 
+        GVL_Process.sStatusMessage := 'BATCH COMPLETE!';
+        GVL_Process.nTotalBottles := GVL_Process.nTotalBottles + 1; 
+        
+        // --- SEPARATE COUNTERS ---
+        IF GVL_Process.nSelectedRecipe = 1 THEN
+            GVL_Process.nColaCount := GVL_Process.nColaCount + 1;
+        ELSIF GVL_Process.nSelectedRecipe = 2 THEN
+            GVL_Process.nJuiceCount := GVL_Process.nJuiceCount + 1;
+        END_IF
+        
+        // --- CONTINUOUS LOOP LOGIC ---
+        IF GVL_Process.bStartProcess THEN
+            eState := STATE_INIT; // Start logic is still ON, jump to next bottle!
+        ELSE
+            eState := STATE_IDLE; // Start was turned OFF, go to sleep.
+        END_IF
+
+STATE_MAINTENANCE: 
+        GVL_Process.sStatusMessage := 'CRITICAL: HIGH VIBRATION & TEMP! MAINTENANCE REQUIRED!';
+        
+        // Sistemi güvenliğe al ve durdur
+        GVL_Process.bInletValve  := FALSE;
+        GVL_Process.bHeater      := FALSE;
+        GVL_Process.bMixerMotor  := FALSE;
+        GVL_Process.bOutletValve := FALSE;
+        fbTimerMixing(IN := FALSE);
+        GVL_Process.bStartProcess := FALSE; // Sürekli üretimi iptal et!
+        
+        
+        IF NOT GVL_Process.bMaintenanceAlarm THEN
+            GVL_Process.nRandomThreshold := 5;
+            
+            GVL_Process.nValveCycleCount := 0;
+            eState := STATE_IDLE;
+        END_IF
+
+    STATE_ERROR: 
+        GVL_Process.sStatusMessage := 'SYSTEM LOCKED - EMERGENCY STOP!';
+        GVL_Process.bInletValve  := FALSE;
+        GVL_Process.bHeater      := FALSE;
+        GVL_Process.bMixerMotor  := FALSE;
+        GVL_Process.bOutletValve := FALSE;
+        fbTimerMixing(IN := FALSE);
+        
+        // E-Stop reset & Start
+        IF NOT GVL_Process.bEmergencyStop AND GVL_Process.bStartProcess THEN
+             GVL_Process.bStartProcess := FALSE;
+             eState := STATE_IDLE;
+        END_IF
+
+END_CASE]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

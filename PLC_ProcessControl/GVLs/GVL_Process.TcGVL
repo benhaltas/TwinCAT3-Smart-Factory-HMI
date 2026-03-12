@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <GVL Name="GVL_Process" Id="{def766d1-445c-4065-a71d-eb8d8528a6a7}">
+    <Declaration><![CDATA[VAR_GLOBAL
+    // --- Recipe Management ---
+    astRecipes      : ARRAY[1..3] OF stRecipe;
+    stCurrentRecipe : stRecipe;
+    nSelectedRecipe : INT := 1;     // 1=Cola, 2=Juice
+    
+    // --- HMI Visual Feedback & UI ---
+    bColaActive     : BOOL;         
+    bJuiceActive    : BOOL;         
+    sStatusMessage  : STRING(50);   
+    sCurrentProduct : STRING(50);   // NEW: Currently running product name
+    
+    // --- Production Stats (OEE - Counters) ---
+    nTotalBottles   : INT := 0;     // Total bottles
+    nColaCount      : INT := 0;     // NEW: Cola counter
+    nJuiceCount     : INT := 0;     // NEW: Juice counter
+    
+    // --- Process Values (Sensors) ---
+    fCurrentTemp    : REAL;
+    fCurrentLevel   : REAL;
+    
+    // --- Control Signals (Buttons & Safety) ---
+    bStartProcess   : BOOL;         // Acts as Continuous Run Flag
+    bEmergencyStop  : BOOL;
+    
+    // --- Actuators (Outputs) ---
+    bInletValve     : BOOL;
+    bOutletValve    : BOOL;
+    bHeater         : BOOL;
+    bMixerMotor     : BOOL;
+	
+// --- Predictive Maintenance 
+    nValveCycleCount       : INT := 0;     
+    nRandomThreshold       : INT := 5;    
+    bMaintenanceAlarm      : BOOL;   
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>
